@@ -44,6 +44,16 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     } else { alert('User/Pass Salah!'); }
 });
 
+// FITUR KELOLA ROLE ADMIN CHAT
+window.setRole = function(role) {
+    const user = document.getElementById('adminUser').value.trim();
+    if(!user) return alert("Isi nama usernya dulu!");
+    database.ref('roles/' + user).set(role).then(() => {
+        alert("Status " + user + " berhasil diubah jadi " + role);
+        document.getElementById('adminUser').value = "";
+    });
+};
+
 window.tambahUserCustom = function() {
     const u = document.getElementById('customUser').value.trim();
     const p = document.getElementById('customPass').value.trim();

@@ -10,12 +10,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        body { background: #000; color: white; font-family: sans-serif; margin: 0; overflow-x: hidden; padding-bottom: 90px; user-select: none; }
-        .background-container { position: fixed; top: 0; width: 100vw; height: 100vh; z-index: -1; }
-        .drop { position: absolute; width: 2px; height: 15px; background: rgba(0, 210, 255, 0.2); animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(100vh); } }
+        body { 
+            background-color: #0b141a; 
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+            background-attachment: fixed;
+            color: white; font-family: sans-serif; margin: 0; overflow-x: hidden; padding-bottom: 90px; user-select: none; 
+        }
 
-        /* Navigasi Bawah - Nyaman di Vivo Y16 */
         .nav-bottom { 
             display: flex; justify-content: space-around; align-items: center;
             position: fixed; bottom: 0; width: 100%; height: 80px;
@@ -31,36 +33,36 @@
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: rgba(20, 20, 20, 0.95); padding: 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #222; }
+        .card { background: rgba(32, 44, 51, 0.95); padding: 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; }
         
-        /* Chat UI */
-        #chatBox { height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; scroll-behavior: smooth; }
-        .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; position: relative; transition: 0.2s; }
+        #chatBox { height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; scroll-behavior: smooth; }
+        .msg { max-width: 85%; padding: 10px 14px; border-radius: 18px; font-size: 14px; position: relative; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
         .msg-me { align-self: flex-end; background: #005c4b; color: white; border-bottom-right-radius: 2px; }
         .msg-them { align-self: flex-start; background: #202c33; color: white; border-bottom-left-radius: 2px; }
         
+        .msg-deleted { opacity: 0.6; font-style: italic; font-size: 12px; background: rgba(50, 50, 50, 0.8) !important; color: #aaa !important; border: 1px dashed #444; }
+
         .react-badge { position: absolute; bottom: -10px; right: 10px; background: #333; border-radius: 10px; padding: 2px 6px; font-size: 12px; border: 1px solid #444; }
-        .del-icon { color: #ff4d4d; font-size: 14px; margin-left: 10px; cursor: pointer; float: right; }
+        .del-icon { color: #ff4d4d; font-size: 14px; margin-left: 10px; cursor: pointer; float: right; opacity: 0.6; }
         
-        /* Panel Emoji */
+        /* CSS EMOJI DENGAN PAGAR */
         #emojiPanel { 
-            display: none; position: fixed; transform: translate(-50%, -100%);
+            display: none; position: fixed; 
             background: #222; padding: 10px; border-radius: 30px; border: 1px solid #444;
             box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 2000; gap: 12px;
+            box-sizing: border-box; max-width: 95vw; flex-wrap: nowrap;
         }
         .emoji-opt { font-size: 24px; cursor: pointer; transition: 0.2s; }
 
-        .chat-input-area { display: flex; gap: 8px; background: #1a1a1a; padding: 10px; border-radius: 30px; margin-top: 10px; border: 1px solid #333; }
+        .chat-input-area { display: flex; gap: 8px; background: #2a3942; padding: 10px; border-radius: 30px; margin-top: 10px; border: 1px solid #333; }
         #chatInput { flex: 1; background: transparent; border: none; color: white; outline: none; padding-left: 10px; font-size: 14px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #333; padding: 12px; font-size: 13px; text-align: left; }
-        th { background: #1a1a1a; color: #00d2ff; }
+        th { background: #111; color: #00d2ff; }
     </style>
 </head>
 <body>
-
-    <div class="background-container" id="rainContainer"></div>
 
     <div id="emojiPanel">
         <span class="emoji-opt" onclick="reactWith('❤️')">❤️</span>
@@ -75,35 +77,30 @@
             <div class="card" style="text-align:center;">
                 <h2 style="color:#00d2ff;">9¹ Dashboard</h2>
                 <p>User: <b id="displayUser">...</b> | <span id="displayRole" style="color:#00d2ff;">Member</span></p>
-                <a href="https://www.tiktok.com/@91_class" target="_blank" style="background:#fff; color:#000; display:flex; align-items:center; justify-content:center; gap:10px; padding:12px; border-radius:15px; text-decoration:none; font-weight:bold;">
-                    <i class="fab fa-tiktok" style="font-size:20px;"></i> Follow TikTok 9¹
+                <a href="https://www.tiktok.com/@nineeone_freestyle" target="_blank" style="background:#fff; color:#000; display:flex; align-items:center; justify-content:center; gap:10px; padding:12px; border-radius:15px; text-decoration:none; font-weight:bold;">
+                    <i class="fab fa-tiktok" style="font-size:20px;"></i> Follow Akun TikTok 9¹
                 </a>
+            </div>
+
+            <div id="notifBox" class="card" style="display: none; border: 1px solid #f1c40f;">
+                <h3 style="color:#f1c40f; margin-top:0;"><i class="fas fa-bullhorn"></i> Pengumuman</h3>
+                <p id="pesanWeb" style="font-size: 14px; line-height: 1.5; color: #eee; white-space: pre-wrap;"></p>
+                <small id="waktuUpdate" style="color: #666; font-size: 10px; display: block; text-align: right;"></small>
             </div>
         </div>
 
         <div id="c" class="section">
-            <div class="card" style="padding: 10px;">
+            <div class="card" style="padding: 10px; background: rgba(11, 20, 26, 0.9);">
                 <div id="chatBox"></div>
                 <div class="chat-input-area">
                     <input type="text" id="chatInput" placeholder="Ketik pesan..." onkeypress="if(event.key==='Enter') sendChat()">
-                    <button onclick="sendChat()" style="background:#00d2ff; border:none; border-radius:50%; width:40px; height:40px; color:#000;"><i class="fas fa-paper-plane"></i></button>
+                    <button onclick="sendChat()" style="background:#00a884; border:none; border-radius:50%; width:40px; height:40px; color:white;"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
 
-        <div id="p" class="section">
-            <div class="card">
-                <h3>🧹 Jadwal Piket</h3>
-                <table id="tabelPiket"></table>
-            </div>
-        </div>
-
-        <div id="j" class="section">
-            <div class="card">
-                <h3>📚 Jadwal Pelajaran</h3>
-                <table id="tabelMapel"></table>
-            </div>
-        </div>
+        <div id="p" class="section"><div class="card"><h3>🧹 Jadwal Piket</h3><table id="tabelPiket"></table></div></div>
+        <div id="j" class="section"><div class="card"><h3>📚 Jadwal Pelajaran</h3><table id="tabelMapel"></table></div></div>
     </div>
 
     <div class="nav-bottom">
@@ -123,15 +120,32 @@
         const database = firebase.database();
         const me = localStorage.getItem('savedUser') || "User";
 
-        // GANTI INI: Masukkan username admin di sini
-        const adminList = ["Admin", "NamaKamu"]; 
-        const isAdmin = adminList.includes(me);
+        let isAdmin = false;
+        database.ref('roles/' + me).on('value', snap => {
+            isAdmin = (snap.val() === "admin" || me === "admin");
+            document.getElementById('displayUser').innerText = me;
+            const roleEl = document.getElementById('displayRole');
+            if (roleEl) {
+                roleEl.innerText = isAdmin ? "Admin" : "Member";
+                roleEl.style.color = isAdmin ? "#ff4d4d" : "#00d2ff";
+            }
+        });
 
-        document.getElementById('displayUser').innerText = me;
-        if(isAdmin) document.getElementById('displayRole').innerText = "Admin";
+        database.ref('konten_web').on('value', snap => {
+            const d = snap.val();
+            const box = document.getElementById('notifBox');
+            if (d && d.pesan) {
+                if (d.exp && Date.now() > d.exp) { box.style.display = 'none'; } 
+                else {
+                    box.style.display = 'block';
+                    document.getElementById('pesanWeb').innerText = d.pesan;
+                    document.getElementById('waktuUpdate').innerText = "Dibuat: " + d.waktu;
+                }
+            } else { box.style.display = 'none'; }
+        });
 
-        let pressTimer;
         let selectedChatKey = null;
+        let pressTimer;
 
         function openS(id, el) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
@@ -144,7 +158,7 @@
         function sendChat() {
             const val = document.getElementById('chatInput').value;
             if(!val.trim()) return;
-            database.ref('chat_kelas').push({ user: me, msg: val, time: Date.now() });
+            database.ref('chat_kelas').push({ user: me, msg: val, time: Date.now(), isDeleted: false });
             document.getElementById('chatInput').value = "";
         }
 
@@ -155,38 +169,49 @@
                 const d = child.val();
                 const key = child.key;
                 const isMe = d.user === me;
-                const canDelete = isAdmin || isMe;
+                const isDeleted = d.isDeleted;
+                const canDelete = isAdmin || (isMe && !isDeleted);
 
                 box.innerHTML += `
-                    <div class="msg ${isMe ? 'msg-me' : 'msg-them'}" 
-                         onmousedown="startPress(event, '${key}')" 
-                         ontouchstart="startPress(event, '${key}')" 
-                         onmouseup="endPress()" 
-                         ontouchend="endPress()">
-                        ${!isMe ? `<b style="font-size:10px; color:#00d2ff; display:block;">${d.user}</b>` : ''}
-                        <div>
+                    <div class="msg ${isMe ? 'msg-me' : 'msg-them'} ${isDeleted ? 'msg-deleted' : ''}" 
+                         onmousedown="${!isDeleted ? `startPress(event, '${key}')` : ''}" 
+                         ontouchstart="${!isDeleted ? `startPress(event, '${key}')` : ''}" 
+                         onmouseup="clearTimeout(pressTimer)" 
+                         ontouchend="clearTimeout(pressTimer)">
+                        ${(!isMe && !isDeleted) ? `<b style="font-size:11px; color:#3498db; display:block; margin-bottom:3px;">${d.user}</b>` : ''}
+                        <div style="word-wrap: break-word;">
                             ${d.msg}
                             ${canDelete ? `<i class="fas fa-trash-can del-icon" onclick="deleteChat('${key}')"></i>` : ''}
                         </div>
-                        ${d.react ? `<div class="react-badge">${d.react}</div>` : ''}
+                        ${(d.react && !isDeleted) ? `<div class="react-badge">${d.react}</div>` : ''}
                     </div>
                 `;
             });
             scrollChat();
         });
 
+        // JAVASCRIPT DENGAN PAGAR LAYAR
         function startPress(e, key) {
             selectedChatKey = key;
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+
             pressTimer = window.setTimeout(() => {
                 const panel = document.getElementById('emojiPanel');
-                const x = e.touches ? e.touches[0].clientX : e.clientX;
-                const y = e.touches ? e.touches[0].clientY : e.clientY;
                 panel.style.display = 'flex';
-                panel.style.left = x + 'px';
-                panel.style.top = (y - 30) + 'px';
+
+                const panelWidth = panel.offsetWidth || 220; 
+                const screenWidth = window.innerWidth;
+
+                // Logika Pagar: Taruh di tengah jari, tapi jangan lewat batas layar
+                let posX = x - (panelWidth / 2);
+                if (posX < 10) posX = 10;
+                if (posX + panelWidth > screenWidth - 10) posX = screenWidth - panelWidth - 10;
+
+                panel.style.left = posX + 'px'; 
+                panel.style.top = (y - 80) + 'px';
             }, 600);
         }
-        function endPress() { clearTimeout(pressTimer); }
 
         function reactWith(emoji) {
             if(selectedChatKey) {
@@ -196,40 +221,40 @@
         }
 
         function deleteChat(key) {
-            if(confirm("Hapus pesan ini untuk semua?")) {
-                database.ref('chat_kelas/' + key).remove();
+            if(confirm("Hapus pesan ini?")) {
+                database.ref('chat_kelas/' + key).once('value', snap => {
+                    const d = snap.val();
+                    if (d.isDeleted || !isAdmin) {
+                        database.ref('chat_kelas/' + key).remove();
+                    } else {
+                        database.ref('chat_kelas/' + key).update({ 
+                            msg: `🚫 Admin ${me} telah menghapus pesan ini`, 
+                            isDeleted: true, 
+                            react: null 
+                        });
+                    }
+                });
             }
         }
 
-        function scrollChat() {
-            const box = document.getElementById('chatBox');
-            box.scrollTop = box.scrollHeight;
-        }
+        function scrollChat() { const box = document.getElementById('chatBox'); box.scrollTop = box.scrollHeight; }
 
-        // DATA JADWAL & PIKET
         const listHari = ['Senin','Selasa','Rabu','Kamis','Jumat'];
         database.ref('data_kelas').on('value', snap => {
             const data = snap.val() || {};
             const p = data.jadwal_piket || {};
             const j = data.jadwal_pelajaran || {};
-            
-            document.getElementById('tabelPiket').innerHTML = "<tr><th>Hari</th><th>Piket</th></tr>" + 
-                listHari.map(h => `<tr><td><b>${h}</b></td><td>${p[h] || '-'}</td></tr>`).join('');
-                
-            document.getElementById('tabelMapel').innerHTML = "<tr><th>Hari</th><th>Mapel</th></tr>" + 
-                listHari.map(h => `<tr><td><b>${h}</b></td><td>${j[h] || '-'}</td></tr>`).join('');
+            document.getElementById('tabelPiket').innerHTML = "<tr><th>Hari</th><th>Piket</th></tr>" + listHari.map(h => `<tr><td><b>${h}</b></td><td>${p[h] || '-'}</td></tr>`).join('');
+            document.getElementById('tabelMapel').innerHTML = "<tr><th>Hari</th><th>Mapel</th></tr>" + listHari.map(h => `<tr><td><b>${h}</b></td><td>${j[h] || '-'}</td></tr>`).join('');
         });
 
-        const rain = document.getElementById('rainContainer');
-        for (let i = 0; i < 30; i++) {
-            const drop = document.createElement('div');
-            drop.className = 'drop';
-            drop.style.left = Math.random() * 100 + 'vw';
-            drop.style.animationDuration = Math.random() * 1.5 + 0.5 + 's';
-            rain.appendChild(drop);
-        }
-
         function logout() { localStorage.clear(); location.href = "index.html"; }
+
+        // Klik luar tutup emoji
+        document.addEventListener('touchstart', (e) => {
+            const p = document.getElementById('emojiPanel');
+            if (p.style.display === 'flex' && !p.contains(e.target)) p.style.display = 'none';
+        });
     </script>
 </body>
 </html>

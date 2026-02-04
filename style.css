@@ -40,6 +40,8 @@ body {
     position: relative;
     z-index: 10;
     width: 350px;
+    /* PAGAR LAYAR UNTUK HP */
+    max-width: 90vw; 
     padding: 40px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
@@ -93,6 +95,7 @@ body {
     width: 100%;
     padding: 10px;
     border: 1px solid #3498db;
+    background: transparent; /* Tambahan agar button tidak default grey */
     color: #3498db;
     font-size: 16px;
     cursor: pointer;
@@ -115,5 +118,3 @@ body {
     color: #3498db;
     text-decoration: none;
 }
-
-

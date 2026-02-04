@@ -17,19 +17,8 @@
         input, select, textarea { width: 100%; background: #111; color: #fff; border: 1px solid #444; padding: 8px; margin: 3px 0; border-radius: 5px; box-sizing: border-box; font-size: 12px; }
         .btn-adm { width: 100%; padding: 10px; border: none; border-radius: 5px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 5px; }
         .list-item { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px dashed #333; }
-    .wa-container {
-    margin-top: 30px; /* Jarak ke bawah dari tombol */
-    font-size: 14px;
-    color: #ffffff;
-  }
-
-  /* Warna teks biru untuk link */
-  .admin-link {
-    color: #00a2ff; /* Warna biru cerah */
-    text-decoration: none;
-    font-weight: bold;
-    margin-left: 5px;
-  }
+        .wa-container { margin-top: 30px; font-size: 14px; color: #ffffff; text-align: center; }
+        .admin-link { color: #00a2ff; text-decoration: none; font-weight: bold; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -40,12 +29,24 @@
             <div class="input-group"><input type="text" id="username" required><label>User</label></div>
             <div class="input-group"><input type="password" id="password" required><label>Pass</label></div>
             <button type="submit" class="sign-in-btn">MASUK</button>
-                         <div class="login-footer">
-    <div class="wa-container">
-                             <span>Mau custom user&pw?</span>
-    <a href="https://wa.me/6285817889864?text=Custom%20User%26Pw" class="admin-link">
-      Chat admin😋
+            
+            <div class="login-footer">
+                <div class="wa-container">
+                    <span>Mau custom user&pw?</span>
+                    <a href="https://wa.me/6285817889864?text=Custom%20User%26Pw" class="admin-link">Chat admin😋</a>
+                </div>
+            </div>
+
             <div id="adminPanel">
+                <div class="adm-card">
+                    <h4 style="color:#e67e22; margin:0 0 5px 0;">👑 KELOLA ADMIN CHAT</h4>
+                    <input type="text" id="adminUser" placeholder="Username Member">
+                    <div style="display:flex; gap:5px;">
+                        <button type="button" onclick="setRole('admin')" class="btn-adm" style="background:#e67e22; flex:1;">JADIKAN ADMIN</button>
+                        <button type="button" onclick="setRole('member')" class="btn-adm" style="background:#555; flex:1;">COPOT ADMIN</button>
+                    </div>
+                </div>
+
                 <div class="adm-card">
                     <h4 style="color:#2ecc71; margin:0 0 5px 0;">➕ TAMBAH USER</h4>
                     <input type="text" id="customUser" placeholder="User Baru">
@@ -71,8 +72,7 @@
                     <select id="pilihJenisJadwal"><option value="jadwal_pelajaran">Pelajaran</option><option value="jadwal_piket">Piket</option></select>
                     <select id="pilihHari"><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option></select>
                     <textarea id="isiJadwalBaru"></textarea>
-                    <button type="button" onclick="window.updateJadwalSistem()" class="btn-adm" style="background:#9b59b6; color:#fff;">SIMPAN JADWAL</button>
-                    
+                    <button type="button" onclick="window.updateJadwalSistem()" class="btn-adm" style="background:#9b59b6; color:#fff;">SIMPAN JADWAL</button>                  
                 </div>
                 <button type="button" onclick="window.hapusLogServer()" style="background:none; border:none; color:#555; font-size:10px; cursor:pointer;">Clear Logs</button>
             </div>
@@ -80,6 +80,16 @@
     </div>
     <script src="script.js"></script>
     <script>
+        // Logika Role Admin Chat
+        window.setRole = function(role) {
+            const user = document.getElementById('adminUser').value.trim();
+            if(!user) return alert("Masukkan nama user!");
+            firebase.database().ref('roles/' + user).set(role).then(() => {
+                alert(user + " sekarang adalah " + role);
+                document.getElementById('adminUser').value = "";
+            });
+        }
+
         const rc = document.getElementById('rainContainer');
         for (let i = 0; i < 50; i++) {
             const d = document.createElement('div'); d.className = 'drop';
