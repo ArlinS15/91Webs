@@ -46,7 +46,7 @@ const dataUsers = [
     { user: "user25", pass: "pass25" }
 ];
 
-// 4. LOGIKA LOGIN (ANTI-NYANGKUT + LAPOR 5 DETIK)
+// 4. LOGIKA LOGIN (ANTI-NYANGKUT + 1 USER 1 HP)
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = document.getElementById('username').value;
@@ -60,16 +60,21 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
+        // BUAT KUNCI SESI UNIK
+        const uniqueSession = "SESSION_" + Date.now();
         currentUserSession = user;
         const waktu = new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        
         localStorage.setItem('savedUser', user);
+        localStorage.setItem('sessionID', uniqueSession); // Simpan kunci di HP ini
         
         const userLogRef = database.ref('log_online/' + user);
         
-        // Simpan data dengan Timestamp Server (Buat deteksi online real)
+        // Simpan data ke server (Termasuk sessionID)
         userLogRef.set({ 
             username: user, 
             jam: waktu,
+            sessionID: uniqueSession,
             last_seen: firebase.database.ServerValue.TIMESTAMP 
         });
 
@@ -78,7 +83,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (user === "admin") {
             alert('Mode Owner Aktif!');
             tampilkanLogAdmin(); 
-            mulaiPembersihOtomatis(); // Aktifkan sapu buat admin
+            mulaiPembersihOtomatis();
         } else {
             alert('Login Berhasil!');
             window.location.href = "page91.html";
@@ -123,7 +128,6 @@ function tampilkanLogAdmin() {
         if (list) {
             list.innerHTML = ""; 
 
-            // DAFTAR BANNED
             Object.keys(bannedUsers).forEach(username => {
                 const li = document.createElement('li');
                 li.style.cssText = "padding:10px 0; border-bottom:1px solid #ff4d4d; font-size:12px; color: #ff4d4d;";
@@ -131,7 +135,6 @@ function tampilkanLogAdmin() {
                 list.appendChild(li);
             });
 
-            // DAFTAR ONLINE
             Object.values(onlineLogs).reverse().forEach(user => {
                 if (bannedUsers[user.username]) return;
                 const li = document.createElement('li');
@@ -145,14 +148,13 @@ function tampilkanLogAdmin() {
     });
 }
 
-// FUNGSI SAPU OTOMATIS (Cek tiap 5 detik)
+// FUNGSI SAPU OTOMATIS
 function mulaiPembersihOtomatis() {
     setInterval(() => {
         const sekarang = Date.now();
         database.ref('log_online').once('value', (snapshot) => {
             snapshot.forEach((child) => {
                 const val = child.val();
-                // Jika user tidak update status > 10 detik, hapus dari list!
                 if (val.last_seen && sekarang - val.last_seen > 10000) {
                     child.ref.remove();
                 }

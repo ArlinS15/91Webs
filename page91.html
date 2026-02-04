@@ -16,7 +16,7 @@
   <p>Testing To lol</p>
 
   <script>
-    // 1. KONFIGURASI FIREBASE (Sesuai dengan index lo)
+    // 1. KONFIGURASI FIREBASE (PASTIKAN TETAP SEPERTI INI)
     const firebaseConfig = {
         apiKey: "AIzaSyDlucMVwMUbw7Ab3t2AVzI13EOHUrqDNZw",
         authDomain: "web-kelas-5b83a.firebaseapp.com",
@@ -31,8 +31,9 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // 2. LOGIKA LAPOR DIRI (Heartbeat 5 Detik & Anti-Undefined)
+    // 2. LOGIKA LAPOR DIRI (Heartbeat 5 Detik & Anti-Login Ganda)
     const userAktif = localStorage.getItem('savedUser');
+    const mySessionID = localStorage.getItem('sessionID'); // Ambil kunci sesi dari login
 
     if (!userAktif || userAktif === "undefined") {
         alert("Sesi habis, silakan login ulang!");
@@ -40,31 +41,37 @@
     } else {
         const userLogRef = database.ref('log_online/' + userAktif);
 
+        // CEK LOGIN GANDA: Jika sessionID di server beda dengan di HP ini, tendang!
+        userLogRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.sessionID && data.sessionID !== mySessionID) {
+                alert("Akun ini telah login di perangkat lain!");
+                localStorage.clear();
+                window.location.href = "index.html";
+            }
+        });
+
         function kirimSinyalAktif() {
             const waktu = new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' });
             
             userLogRef.update({
                 username: userAktif, 
                 jam: waktu,
+                sessionID: mySessionID, // Kirim ID sesi biar gak dikira login baru
                 last_seen: firebase.database.ServerValue.TIMESTAMP,
                 status: "Aktif di Page 91"
             }).catch(err => console.error("Gagal lapor:", err));
         }
 
-        // Jalankan laporan pertama kali
         kirimSinyalAktif();
-        
-        // Hapus log kalau beneran tutup browser (onDisconnect)
         userLogRef.onDisconnect().remove();
-
-        // INTERVAL LAPOR TIAP 5 DETIK
         setInterval(kirimSinyalAktif, 5000);
 
-        // FITUR KICK/BAN REALTIME (Mental kalau di-ban admin)
+        // FITUR BAN REALTIME
         database.ref('status_user/' + userAktif).on('value', (snapshot) => {
             if (snapshot.exists() && snapshot.val() === "banned") {
                 alert("Akses Anda telah dicabut!");
-                localStorage.removeItem('savedUser');
+                localStorage.clear();
                 window.location.href = "index.html";
             }
         });
