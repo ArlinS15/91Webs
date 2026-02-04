@@ -1,85 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>91page</title>
-  
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9¹ | Dashboard</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <style>
+        body { background: #000; color: white; font-family: sans-serif; text-align: center; margin: 0; overflow-x: hidden; }
+        .background-container { position: fixed; top: 0; width: 100vw; height: 100vh; z-index: -1; }
+        .drop { position: absolute; width: 2px; height: 15px; background: rgba(0, 210, 255, 0.3); animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh); } }
+
+        .nav { display: flex; gap: 10px; justify-content: center; padding: 20px; background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
+        .btn { padding: 10px 20px; background: #1a1a1a; border-radius: 25px; font-size: 12px; cursor: pointer; border: 1px solid #333; transition: 0.3s; color: #fff; text-decoration: none; }
+        .btn:hover { border-color: #00d2ff; }
+
+        .container { padding: 20px; max-width: 600px; margin: auto; }
+        .section { display: none; animation: fadeIn 0.5s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .card { background: rgba(20, 20, 20, 0.9); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #222; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h3 { color: #00d2ff; margin-top: 0; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #333; padding: 12px; font-size: 13px; text-align: left; }
+        th { background: #1a1a1a; color: #00d2ff; }
+        
+        .tiktok-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: linear-gradient(45deg, #ff0050, #00f2ea); color: white;
+            padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold;
+            font-size: 14px; margin-top: 10px; transition: 0.3s;
+        }
+        .tiktok-btn:active { transform: scale(0.95); }
+        #upBox { border: 1px solid #00d2ff; background: rgba(0, 210, 255, 0.05); }
+    </style>
 </head>
 <body>
-  <h1 onclick="bukaLogPribadi()" style="cursor:pointer; color: #00d2ff;">
-    9¹
-  </h1>
-  
-  <p>Testing To lol</p>
 
-  <script>
-    // 1. KONFIGURASI FIREBASE (SAMAKAN DENGAN INDEX)
-    const firebaseConfig = {
-        apiKey: "AIzaSyDlucMVwMUbw7Ab3t2AVzI13EOHUrqDNZw",
-        authDomain: "web-kelas-5b83a.firebaseapp.com",
-        databaseURL: "https://web-kelas-5b83a-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "web-kelas-5b83a",
-        storageBucket: "web-kelas-5b83a.firebasestorage.app",
-        messagingSenderId: "711947014423",
-        appId: "1:711947014423:web:d8cb787c503d7d7538e752",
-        measurementId: "G-RYNNLZCGY5"
-    };
+    <div class="background-container" id="rainContainer"></div>
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    <div class="nav">
+        <div class="btn" onclick="openS('h')">Home</div>
+        <div class="btn" onclick="openS('p')">Piket</div>
+        <div class="btn" onclick="openS('j')">Jadwal</div>
+        <div class="btn" onclick="logout()" style="color: #ff4d4d;">Keluar</div>
+    </div>
 
-    // 2. LOGIKA LAPOR DIRI (PENTING AGAR PINTU TETAP TERBUKA BUAT LO SENDIRI)
-    const userAktif = localStorage.getItem('savedUser');
-
-    if (!userAktif || userAktif === "undefined") {
-        window.location.href = "index.html"; 
-    } else {
-        const userLogRef = database.ref('log_online/' + userAktif);
-
-        function kirimSinyalAktif() {
-            const waktu = new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    <div class="container">
+        <div id="h" class="section active">
+            <div id="upBox" class="card" style="display:none;">
+                <h4 style="margin:0 0 10px 0; color:#00d2ff; font-size:12px;">📢 PENGUMUMAN</h4>
+                <p id="upTeks" style="margin:0; font-size:15px; line-height:1.6;"></p>
+                <small id="upWaktu" style="color:#555; display:block; margin-top:10px; font-size:10px;"></small>
+            </div>
             
-            // Update last_seen tiap 5 detik biar nggak dianggap "mati" sama Sapu Otomatis Admin
-            userLogRef.update({
-                username: userAktif,
-                jam: waktu,
-                last_seen: firebase.database.ServerValue.TIMESTAMP,
-                status: "Aktif"
-            });
+            <div class="card">
+                <h3>Welcome 9¹</h3>
+                <p style="color:#888;">Gunakan menu di atas untuk melihat jadwal piket dan pelajaran kelas.</p>
+                
+                <a href="https://www.tiktok.com/@91_class" target="_blank" class="tiktok-btn">
+                    <span>🎵</span> Follow TikTok 9¹
+                </a>
+            </div>
+        </div>
+
+        <div id="p" class="section">
+            <h3>🧹 Jadwal Piket</h3>
+            <div class="card">
+                <table id="tabelPiket"></table>
+            </div>
+        </div>
+
+        <div id="j" class="section">
+            <h3>📚 Jadwal Pelajaran</h3>
+            <div class="card">
+                <table id="tabelMapel"></table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlucMVwMUbw7Ab3t2AVzI13EOHUrqDNZw",
+            authDomain: "web-kelas-5b83a.firebaseapp.com",
+            databaseURL: "https://web-kelas-5b83a-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "web-kelas-5b83a",
+            storageBucket: "web-kelas-5b83a.firebasestorage.app",
+            messagingSenderId: "711947014423",
+            appId: "1:711947014423:web:d8cb787c503d7d7538e752",
+            measurementId: "G-RYNNLZCGY5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const me = localStorage.getItem('savedUser');
+
+        if(!me) window.location.href = "index.html";
+
+        // HUJAN ASLI
+        const rain = document.getElementById('rainContainer');
+        for (let i = 0; i < 60; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'drop';
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 1.5 + 0.5 + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            rain.appendChild(drop);
         }
 
-        kirimSinyalAktif();
-        
-        // Hapus nama dari daftar online kalau user logout atau tutup tab
-        userLogRef.onDisconnect().remove();
+        // HEARTBEAT
+        setInterval(() => {
+            database.ref('log_online/' + me).update({ last_seen: firebase.database.ServerValue.TIMESTAMP });
+        }, 5000);
 
-        // Lapor tiap 5 detik
-        setInterval(kirimSinyalAktif, 5000);
-
-        // FITUR BAN REALTIME
-        database.ref('status_user/' + userAktif).on('value', (snapshot) => {
-            if (snapshot.exists() && snapshot.val() === "banned") {
-                alert("Akses Anda telah dicabut!");
+        // BAN CHECK
+        database.ref('status_user/' + me).on('value', snap => {
+            if(snap.val() === "banned") {
+                alert("Anda di-BAN!");
                 localStorage.clear();
-                window.location.href = "index.html";
+                location.href = "index.html";
             }
         });
-    }
 
-    // 3. FUNGSI RIWAYAT PRIBADI
-    window.bukaLogPribadi = function() {
-        if (!userAktif) return;
-        database.ref('riwayat_pribadi/' + userAktif).limitToLast(5).once('value', (snapshot) => {
-            let text = `📜 Riwayat Login (${userAktif}):\n\n`;
-            if (snapshot.exists()) {
-                snapshot.forEach(child => { text += `• ${child.val().waktu}\n`; });
-                alert(text);
-            } else { alert("Belum ada riwayat."); }
+        function openS(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // TARIK PESAN ADMIN
+        database.ref('konten_web').on('value', snap => {
+            const d = snap.val();
+            const box = document.getElementById('upBox');
+            if(d && (!d.exp || Date.now() < d.exp)) {
+                box.style.display = "block";
+                document.getElementById('upTeks').innerText = d.pesan;
+                document.getElementById('upWaktu').innerText = d.waktu;
+            } else { box.style.display = "none"; }
         });
-    };
-  </script>
+
+        // TARIK JADWAL (DENGAN TEMPLATE)
+        const listHari = ['Senin','Selasa','Rabu','Kamis','Jumat'];
+        database.ref('data_kelas').on('value', snap => {
+            const data = snap.val() || {};
+            
+            // ISI TEMPLATE DEFAULT
+            const piketDef = { 'Senin':'Budi, Andi','Selasa':'Fani, Gani','Rabu':'Kiki, Lala','Kamis':'Putri, Raka','Jumat':'Vina, Wawan' };
+            const mapelDef = { 'Senin':'MTK, Agama','Selasa':'IPA, Olahraga','Rabu':'IPS, B.Indo','Kamis':'MTK, Inggris','Jumat':'Seni, BK' };
+
+            const p = data.jadwal_piket || piketDef;
+            const j = data.jadwal_pelajaran || mapelDef;
+            
+            document.getElementById('tabelPiket').innerHTML = "<tr><th>Hari</th><th>Piket</th></tr>" + 
+                listHari.map(h => `<tr><td><b>${h}</b></td><td>${p[h] || '-'}</td></tr>`).join('');
+            
+            document.getElementById('tabelMapel').innerHTML = "<tr><th>Hari</th><th>Mapel</th></tr>" + 
+                listHari.map(h => `<tr><td><b>${h}</b></td><td>${j[h] || '-'}</td></tr>`).join('');
+        });
+
+        function logout() {
+            database.ref('log_online/' + me).remove();
+            localStorage.clear();
+            location.href = "index.html";
+        }
+    </script>
 </body>
 </html>
